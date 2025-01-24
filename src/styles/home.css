@@ -1,0 +1,24 @@
+.home-content {
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.55);
+    width: 800px;
+    color: white;
+}
+
+.chef-img {
+    margin: 20px;
+    border-radius: 50%;
+    width: 400px;
+}
+
+.home-content > p {
+    font-size: 1.05rem;
+    text-align: center;
+    line-height: 3.5;
+    margin: 20px;
+}
+
