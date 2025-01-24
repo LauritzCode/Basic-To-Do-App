@@ -1,2 +1,2 @@
-# Restaurant-Page
-A simple restaurant page to practice basic "webpack" principles. 
+# Basic To-Do Application
+A simple to-do app to practice various principles. 
