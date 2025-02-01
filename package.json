@@ -22,6 +22,7 @@
     "colorette": "^2.0.20",
     "commander": "^2.20.3",
     "cross-spawn": "^7.0.6",
+    "date-fns": "^4.1.0",
     "electron-to-chromium": "^1.5.84",
     "enhanced-resolve": "^5.18.0",
     "envinfo": "^7.14.0",

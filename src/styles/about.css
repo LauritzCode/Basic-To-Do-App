@@ -1,0 +1,89 @@
+.about-content {
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.about-logo {
+    width: 200px;
+    margin-bottom: 40px;
+}
+
+.about-content > h2 {
+    margin: 50px 0;
+    font-size: 3rem;
+    color: rgba(0, 0, 0, 0.85);
+    text-align: center;
+    width: 800px;
+}
+
+.logo-h1 {
+    width: 100px;
+    margin-bottom: 50px;
+}
+
+.about-content> p {
+    width: 60%;
+    font-size: 1.5rem;
+    margin-top: 20px;
+    color: var(--main-text);
+    text-align: center;
+}
+
+.about-content > button {
+    padding: 20px 10px;
+    outline: none;
+    border: none;
+    background: none;
+    font-size: 1.5rem;
+    color: var(--lighter-blue);
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.about-content > h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+}
+
+.presentation-img {
+    width: 100%;
+    margin-bottom: 75px;
+}
+
+.more-details {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    flex-direction: column;
+}
+
+.title-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+}
+
+.title-section > img {
+    width: 75px;
+    margin: 10px;
+}
+
+.more-details > p {
+    width: 40%;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 100px;
+}
+
+.title-section > h2 {
+    font-size: 3rem;
+    font-weight: 800;
+}
