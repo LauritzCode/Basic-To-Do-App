@@ -192,11 +192,57 @@ const renderTaskDetail = (todo, container) => {
     <p><strong>Description:</strong> ${todo.description}</p>
     <p><strong>Due Date:</strong> ${todo.dueDate}</p>
     <p><strong>Priority:</strong> ${todo.priority}</p>
+    <button id="editTaskBtn">Edit</button>
     `
-    
-
-    
+    container.querySelector("#editTaskBtn").addEventListener("click", () => {
+        renderTaskEdit(todo, container);
+    })
 }
+
+const renderTaskEdit = (todo, container) => {
+    container.innerHTML = `
+    <h1>Edit Task</h1>
+    <label>
+    Title: <input type="text" id="editTitle" value="${todo.title}">
+    </label>
+    <label>
+    Description: <input type="text" id="editDescription" value="${todo.description}">
+    </label>
+    <label>
+    Due Date: <input type="date" id="editDueDate" value="${todo.dueDate}">
+    </label>
+    <label>
+    Priority:
+    <select id="editPriority">
+    <option value="low" ${todo.priority === "low" ? "selected" : ""}>Low</option>
+    <option value="low" ${todo.priority === "medium" ? "selected" : ""}>Medium</option>
+    <option value="low" ${todo.priority === "high" ? "selected" : ""}>High</option>
+    </select>
+    </label>
+    <button id="saveTaskBtn">Save</button>
+    <button id="cancelEditBtn">Cancel</button>
+    `;
+
+    container.querySelector("#saveTaskBtn").addEventListener("click", () => {
+        todo.title = container.querySelector("#editTitle").value;
+        todo.description = container.querySelector("#editDescription").value;
+        todo.dueDate = container.querySelector("#editDueDate").value;
+        todo.priority = container.querySelector("#editPriority").value;
+
+        saveProjects([activeProject]);
+
+ // Re-render the entire task list so the updated title appears everywhere
+        renderTaskList(document.querySelector(".tasks-list"));
+
+    // Re-render the task details panel
+        renderTaskDetail(todo, container);
+
+    })
+
+    container.querySelector("#cancelEditBtn").addEventListener("click", () => {
+        renderTaskDetail(todo, container);
+    });
+};
 
 const renderDefaultSetup = (setup) => {
     const div = document.createElement("div");
