@@ -15,10 +15,10 @@
 .features-content > button {
     padding: 20px 10px;
     outline: none;
-    border: none;
+    border: 2px solid var(--task-bubbles);
     background: none;
     font-size: 1.5rem;
-    color: var(--lighter-blue);
+    color: var(--bubbles-hover);
     cursor: pointer;
     font-weight: 800;
 }
@@ -77,7 +77,11 @@
 }
 
 .startBtn:hover {
-    background-color: rgba(60, 127, 243, 0.1);
+    background-color: var(--bubbles-hover);
+    color: white;
+    border: 2px solid var(--bubbles-hover);
+    box-shadow: 0px 5px 19px 0px rgba(0,0,0,0.45);
+    
 }
 
 .startBtn {

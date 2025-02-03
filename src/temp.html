@@ -1,4 +1,23 @@
-<div class="about-content">
-
-</div>
-
+<div id="formModal" class="form-modal hidden">
+    <div class="form-wrap">
+    <div class="modal-inputs">
+    <h1>Add your first tasks</h1>
+    <input type="text" id="todoTitle" placeholder="Title..." required>
+    <textarea id="todoDescription" placeholder="Write description..."></textarea>
+    <div class="modal-date-priority"><input type="date" id="todoDueDate" required>
+    <select id="toDoPriority">
+    <option value="low">Low</option> 
+    <option value="medium" selected>Medium</option>
+    <option value="high">High</option>
+    </select></div>
+     </div>
+     <div class="parallel-wrap">
+        <h2>Good Morning.</h2>
+        <h3>Time to add your first tasks.</h3>
+    </div>
+    </div>
+     <div class="modal-buttons">
+    <button type="submit">Add Todo</button>
+    <button class="cancelbtn" id="cancelbtn">back</button>
+    </div>
+      </div>

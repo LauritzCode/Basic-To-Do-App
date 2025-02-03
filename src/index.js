@@ -2,9 +2,9 @@ import "./global.css"
 import "./styles/features.css"
 import { loadFeatures } from "./modules/features"
 import { loadAbout } from "./modules/about"
-import { loadTicked } from "./modules/app/ticked"
+import { loadTicked } from "./modules/ticked"
 import "./styles/about.css"
-
+import "./styles/ticked.css" 
 
 const featuresBtn = document.querySelector("#featuresBtn")
 const aboutBtn = document.querySelector("#aboutBtn")

@@ -3,7 +3,7 @@
 
 import { clearContent } from "./helpers"
 import contentLogo from "../../assets/icons/logo-img.png"
-import { loadTicked } from "./app/ticked"
+import { loadTicked } from "./ticked"
 
 
 
