@@ -1,14 +1,33 @@
 import { clearContent } from "./helpers"
 import { Todo } from "./app/todo"
 import { Project } from "./app/project"
-import { saveProjects } from "./app/storage"
+import { loadProjects, saveProjects } from "./app/storage"
+import { reviveProjects } from "./helpers"
 
 let projects = [];
-
-
 let defaultProject = new Project("Default");
-projects.push(defaultProject);
 let activeProject = defaultProject;
+
+
+
+
+const loadedProjects = loadProjects();
+if (loadedProjects.length > 0) {
+    projects = reviveProjects(loadedProjects);
+    activeProject = projects[0];
+
+    saveProjects(projects); // ✅ Ensure storage is updated
+
+    console.log("Loaded projects from storage:", projects);
+} else {
+    projects.push(defaultProject);
+    activeProject = defaultProject;
+    saveProjects(projects);
+}
+
+
+saveProjects(projects);
+
 
 const renderSideNav = (nav) => {
 
@@ -22,6 +41,7 @@ const renderSideNav = (nav) => {
 
             activeProject = project;
             renderTaskList(document.querySelector(".tasks-list"));
+            renderProjectHeader(document.querySelector(".project-header"))
         });
         nav.appendChild(btn);
     });
@@ -50,19 +70,23 @@ const renderTaskList = (container) => {
         }
         // Use a label containing a checkbox and the task title.
         divCard.innerHTML = `
-                <input type="checkbox" class="complete-checkbox" ${todo.completed ? "checked" : ""}>
-                <span>${todo.title}</span>
-        `;
+    <input type="checkbox" class="complete-checkbox" ${todo.completed ? "checked" : ""}>
+    <span>${todo.title}</span>
+`;
+
         taskContainer.appendChild(divCard);
 
         // Attach an event listener to the checkbox.
         const checkbox = divCard.querySelector(".complete-checkbox");
+        
         checkbox.addEventListener("change", (e) => {
-            e.stopPropagation(); // Prevent the click from triggering other events.
-            // Toggle the task's completed property based on the checkbox.
+            e.stopPropagation(); // Prevents accidental clicks on the task itself
             todo.completed = e.target.checked;
-            saveProjects([defaultProject]);   // Save updated project state to localStorage.
-            renderTaskList(container);          // Re-render to update styling and ordering.
+        
+            saveProjects(projects);  // ✅ Save the updated state to localStorage
+            console.log("Task marked as complete:", todo);
+        
+            renderTaskList(container);  // Re-render to update UI
         });
 
         // Attach a click listener for showing task details.
@@ -81,7 +105,7 @@ const renderToDoLists = (todoLists) => {
     todoLists.appendChild(div)
 }
 
-const openProjectModal = (container) => {
+const openProjectModal = (container, callback) => {
 
     let existingModal = container.querySelector("#projectModal")
     if (existingModal) {
@@ -98,6 +122,7 @@ const openProjectModal = (container) => {
     <input class="project-name-form" type="text" placeholder="Personal..." required>
     </label>
     <button class="add-project-btn" type="submit">Add Project</button>
+    <button class="cancel-project-btn">Cancel</button>
     </div>
     `
     const modalEl = form.querySelector("#projectModal");
@@ -115,11 +140,71 @@ const openProjectModal = (container) => {
 
         const newProject = new Project(projectTitle)
         projects.push(newProject)
+        saveProjects(projects);
         
-        activeProject = newProject;
-
+        
+        renderProjectHeader(document.querySelector(".project-header"));
         container.removeChild(form)
+        renderTaskList(document.querySelector(".tasks-list"));
         renderSideNav(container);
+
+        if (callback) callback(newProject);
+        container.removeChild(form);
+    });
+
+    form.querySelector(".cancel-project-btn").addEventListener("click", () => {
+        container.removeChild(form);
+    })
+}
+
+const renderProjectHeader = (container) => {
+
+    if (projects.length === 0) {
+        container.innerHTML = `<h2>No Projects available</h2>`
+        return;
+    }
+
+    container.innerHTML = `
+    <h2>${activeProject.name}</h2>
+    <button id="editProjectBtn">✎</button>
+    `;
+
+    container.querySelector("#editProjectBtn").addEventListener("click", () => {
+        renderProjectEdit(container);
+    })
+}
+
+const renderProjectEdit = (container) => {
+    container.innerHTML = `
+    <input type="text" id="editProjectName" value="${activeProject.name}">
+    <button id="saveProjectBtn">Save</button>
+    <button id="deleteProjectBtn">Delete</button>
+    <button id="cancelProjectEditBtn">Cancel</button>
+    `;
+
+    container.querySelector("#saveProjectBtn").addEventListener("click", () => {
+        activeProject.name = container.querySelector("#editProjectName").value;
+        renderProjectHeader(container);
+        renderSideNav(document.querySelector(".side-nav"));
+    });
+
+    container.querySelector("#deleteProjectBtn").addEventListener("click", () => {
+        projects = projects.filter(p => p !== activeProject)
+        
+        if (projects.length === 0) {
+            activeProject = defaultProject || null;
+        } else {
+            activeProject = projects[0];
+        }
+
+        activeProject = projects[0] || defaultProject;
+        renderProjectHeader(container)
+        renderSideNav(document.querySelector(".side-nav"));
+        renderTaskList(document.querySelector(".tasks-list"));
+    });
+
+    container.querySelector("#cancelProjectEditBtn").addEventListener("click", () => {
+        renderProjectHeader(container);
     });
 }
 
@@ -167,7 +252,7 @@ const renderToDoForm = (container) => {
         activeProject.addTodo(newTodo);
         renderTaskList(container);
     
-        saveProjects([defaultProject]);
+        saveProjects(projects);
     
         
         form.reset();
@@ -192,10 +277,22 @@ const renderTaskDetail = (todo, container) => {
     <p><strong>Description:</strong> ${todo.description}</p>
     <p><strong>Due Date:</strong> ${todo.dueDate}</p>
     <p><strong>Priority:</strong> ${todo.priority}</p>
+    <div class="alteration-btns">
     <button id="editTaskBtn">Edit</button>
+    <button id="deleteTaskBtn">Delete</button>
+    </div>
     `
     container.querySelector("#editTaskBtn").addEventListener("click", () => {
         renderTaskEdit(todo, container);
+    })
+
+    container.querySelector("#deleteTaskBtn").addEventListener("click", () => {
+        activeProject.todos = activeProject.todos.filter(t => t !== todo)
+        saveProjects(projects);
+        renderTaskList(document.querySelector(".tasks-list"));
+        container.innerHTML = `
+        <p>Select a task to see its details</p>
+        ` 
     })
 }
 
@@ -215,29 +312,85 @@ const renderTaskEdit = (todo, container) => {
     Priority:
     <select id="editPriority">
     <option value="low" ${todo.priority === "low" ? "selected" : ""}>Low</option>
-    <option value="low" ${todo.priority === "medium" ? "selected" : ""}>Medium</option>
-    <option value="low" ${todo.priority === "high" ? "selected" : ""}>High</option>
+    <option value="medium" ${todo.priority === "medium" ? "selected" : ""}>Medium</option>
+    <option value="high" ${todo.priority === "high" ? "selected" : ""}>High</option>
     </select>
     </label>
+
+    <label>
+    Move to Project:
+    <select id="moveProjectSelect">
+    ${projects.map(proj => `<option value="${proj.name}" ${proj === activeProject ? "selected" : ""}>${proj.name}</option>`).join("")}
+    <option value="add-new">➕ Add new project</option>
+    </select>
+    </label>
+
     <button id="saveTaskBtn">Save</button>
     <button id="cancelEditBtn">Cancel</button>
     `;
 
     container.querySelector("#saveTaskBtn").addEventListener("click", () => {
-        todo.title = container.querySelector("#editTitle").value;
-        todo.description = container.querySelector("#editDescription").value;
-        todo.dueDate = container.querySelector("#editDueDate").value;
-        todo.priority = container.querySelector("#editPriority").value;
+        const newTitle = container.querySelector("#editTitle").value;
+        const newDescription = container.querySelector("#editDescription").value;
+        const newDueDate = container.querySelector("#editDueDate").value;
+        const newPriority = container.querySelector("#editPriority").value;
+        const selectedProjectName = container.querySelector("#moveProjectSelect").value;
 
-        saveProjects([activeProject]);
+        if (selectedProjectName !== activeProject.name) {
+            const targetProject = projects.find(proj => proj.name === selectedProjectName);
 
- // Re-render the entire task list so the updated title appears everywhere
+            if (targetProject) {
+                activeProject.todos = activeProject.todos.filter(t => t !== todo);
+
+                const movedTask = new Todo(newTitle, newDescription, newDueDate, newPriority);
+                targetProject.addTodo(movedTask);
+            //     activeProject = targetProject;
+
+                saveProjects(projects);
+
+                 // Re-render the entire task list so the updated title appears everywhere
+                renderSideNav(document.querySelector(".side-nav"));
+                renderTaskList(document.querySelector(".tasks-list"));
+                document.querySelector(".task-detail").innerHTML = `<p>Select a task to see its details</p>`;
+                renderProjectHeader(document.querySelector(".project-header"));
+
+                return;
+            }
+        }
+
+        todo.title = newTitle
+        todo.description = newDescription;
+        todo.dueDate = newDueDate;
+        todo.priority = newPriority;
+
+        saveProjects(projects);
+
         renderTaskList(document.querySelector(".tasks-list"));
-
-    // Re-render the task details panel
         renderTaskDetail(todo, container);
 
     })
+
+    const projectDropDown = container.querySelector("#moveProjectSelect");
+
+projectDropDown.addEventListener("change", (e) => {
+    if (e.target.value === "add-new") {
+        openProjectModal(document.querySelector(".side-nav"), (newProject) => {
+            if (newProject) {
+                projects.push(newProject); // Ensure it's in the list
+                saveProjects(projects); // ✅ Save immediately
+
+                projectDropDown.innerHTML = projects
+                    .map(proj => `<option value="${proj.name}" ${proj.name === newProject.name ? "selected" : ""}>${proj.name}</option>`)
+                    .join("") + `<option value="add-new">➕ Add new project</option>`;
+
+                projectDropDown.value = newProject.name;
+            }
+        });
+    }
+});
+
+
+
 
     container.querySelector("#cancelEditBtn").addEventListener("click", () => {
         renderTaskDetail(todo, container);
@@ -251,15 +404,23 @@ const renderDefaultSetup = (setup) => {
     <button id="addTaskBtn" class="addTaskBtn">Add Task</button>
     `
     setup.appendChild(div);
+
+
     setup.querySelector("#addTaskBtn").addEventListener("click", () => {
+        if (projects.length === 0) {
+            alert("You need to create a project before adding tasks.");
+            openProjectModal(document.querySelector(".side-nav"));
+            return;
+        }
+
         const modal = document.querySelector("#formModal")
         modal.classList.remove("hidden");
     });
-}
+};
 
 export const loadTicked = () => {
     if (document.querySelector(".ticked-content")) {
-        return
+        return;
     }
 
     clearContent();
@@ -274,19 +435,24 @@ export const loadTicked = () => {
         <div class="tasks-list"></div>
         <div class="task-detail"></div>
     </div>
+    <div class="project-header"></div>
     `;
     content.appendChild(div);
 
     const sidenav = div.querySelector(".side-nav");
     const sideTasks = div.querySelector(".tasks-view");
     const taskDiv = div.querySelector(".tasks-list");
+    const projectHeader = div.querySelector(".project-header");
 
-    renderSideNav(sidenav)
-    renderToDoForm(sideTasks)
-    renderToDoLists(taskDiv)
-    renderDefaultSetup(taskDiv)
+    renderProjectHeader(projectHeader);
+    renderSideNav(sidenav);
+    renderToDoForm(sideTasks);
+    renderToDoLists(taskDiv);
+    renderDefaultSetup(taskDiv);
+
+    // ✅ Force load the tasks for the active project
+    renderTaskList(taskDiv); 
 
     const detailContainer = div.querySelector(".task-detail");
     detailContainer.innerHTML = `<p>Select a task to see its details</p>`;
 };
-
