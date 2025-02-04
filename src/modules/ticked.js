@@ -186,6 +186,7 @@ const renderProjectEdit = (container) => {
         activeProject.name = container.querySelector("#editProjectName").value;
         renderProjectHeader(container);
         renderSideNav(document.querySelector(".side-nav"));
+        saveProjects(projects);
     });
 
     container.querySelector("#deleteProjectBtn").addEventListener("click", () => {
@@ -197,6 +198,7 @@ const renderProjectEdit = (container) => {
             activeProject = projects[0];
         }
 
+        saveProjects(projects);
         activeProject = projects[0] || defaultProject;
         renderProjectHeader(container)
         renderSideNav(document.querySelector(".side-nav"));
