@@ -22,17 +22,24 @@
 
 } 
 
-html, body {
-    height: 100%;
-    margin: 0;
+  body {
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+    background-color: var(--main-content);
   }
 
-body {
-    background-color: var(--main-content);
+.page-wrapper {
     display: flex;
     flex-direction: column;
+    height: 100%;
+  }
 
-}
+  .content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
 
 header {
     width: 100%;

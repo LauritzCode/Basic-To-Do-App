@@ -8,11 +8,15 @@ export const saveProjects = (projects) => {
 export const loadProjects = () => {
     const data = localStorage.getItem(STORAGE_KEY);
 
-    if (data) {
-        console.log("Projects loaded from localstorage");
-        return reviveProjects(JSON.parse(data));
+    if (!data || data === "undefined") {
+        return [];
     }
 
-    console.log("no projects found in localStorage, starting fresh");
-    return [];
-}
+    try {
+        const parsedData = JSON.parse(data);
+        return reviveProjects(parsedData);
+    } catch (error) {
+        return [];
+    }
+};
+
