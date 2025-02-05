@@ -38,6 +38,11 @@ const renderSideNav = (nav) => {
     `
     nav.appendChild(title)
 
+    const projectHome = document.createElement("div");
+    projectHome.classList.add("project-home")
+    nav.appendChild(projectHome)
+
+
     projects.forEach(project => {
         const btn = document.createElement("button");
         btn.textContent = project.name; 
@@ -48,7 +53,8 @@ const renderSideNav = (nav) => {
             renderTaskList(document.querySelector(".tasks-list"));
             renderProjectHeader(document.querySelector(".project-header"))
         });
-        nav.appendChild(btn);
+        const projectHome = document.querySelector(".project-home");
+        projectHome.appendChild(btn);
     });
 
     const addProjectBtn = document.createElement("button");

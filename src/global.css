@@ -83,4 +83,21 @@ nav {
     margin: 0 20px;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+  padding: 2px;
+}
+::-webkit-scrollbar-track {
+  
+  border-radius: 5px;
+}
 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: none;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-button {
+  color: black;
+}
