@@ -31,6 +31,13 @@ const renderSideNav = (nav) => {
 
     nav.innerHTML = "";
 
+    const title = document.createElement("div");
+    title.classList.add("nav-filler");
+    title.innerHTML = `
+        <h3>Projects</h3>
+    `
+    nav.appendChild(title)
+
     projects.forEach(project => {
         const btn = document.createElement("button");
         btn.textContent = project.name; 
@@ -46,7 +53,7 @@ const renderSideNav = (nav) => {
 
     const addProjectBtn = document.createElement("button");
     addProjectBtn.classList.add("add-project-btn");
-    addProjectBtn.textContent = "+";
+    addProjectBtn.textContent = "+ Add";
     addProjectBtn.addEventListener("click", () => openProjectModal(nav));
     nav.appendChild(addProjectBtn);
 }
@@ -161,8 +168,10 @@ const openProjectModal = (container, callback) => {
     <span>Project name:</span>
     <input class="project-name-form" type="text" placeholder="Personal..." required>
     </label>
+        <div class="project-btns-modal">
     <button class="add-project-btn" type="submit">Add Project</button>
     <button class="cancel-project-btn">Cancel</button>
+        </div>
     </div>
     `
     const modalEl = form.querySelector("#projectModal");
@@ -260,7 +269,7 @@ const renderToDoForm = (container) => {
     <div id="formModal" class="form-modal hidden">
     <div class="form-wrap">
     <div class="modal-inputs">
-    <h1>Add your first tasks</h1>
+    <h1>Add your tasks</h1>
     <input class="modal-input" type="text" id="todoTitle" placeholder="Title..." required>
     <input type="text" class="modal-input" id="todoDescription" placeholder="Write description...">
     <div class="modal-date-priority"><input type="date" id="todoDueDate" required>
@@ -277,7 +286,7 @@ const renderToDoForm = (container) => {
     </div>
      <div class="modal-buttons">
     <button class="add-todo-button" type="submit">Add Todo</button>
-    <button class="cancelbtn" id="cancelbtn">back</button>
+    <button class="cancelbtn" id="cancelbtn">Cancel</button>
     </div>
       </div>
     `;
@@ -320,11 +329,13 @@ const renderTaskDetail = (todo, container) => {
     
     container.innerHTML = `
     <h1>Your task.</h1>
-    <p><strong>Title:</strong> ${todo.title}</p>
-    <p><strong>Description:</strong> ${todo.description}</p>
+     <div class="task-info-wrap"
+    <p>Title: ${todo.title}</p>
+    <label>Description:
+    <p class="task-description"><strong></strong> ${todo.description}</p></label>
     <p><strong>Due Date:</strong> ${todo.dueDate ? format(new Date(todo.dueDate), "PPP") : "No due date"}</p>
     <p><strong>Priority:</strong> ${todo.priority}</p>
-    <p><strong>Completed:</strong> ${todo.completed}</p>
+    </div>
     <div class="alteration-btns">
     <button id="editTaskBtn">Edit</button>
     <button id="deleteTaskBtn">Delete</button>
@@ -346,6 +357,7 @@ const renderTaskDetail = (todo, container) => {
 
 const renderTaskEdit = (todo, container) => {
     container.innerHTML = `
+    <div class="edit-task-wrap">
     <h1>Edit Task</h1>
     <label>
     Title: <input type="text" id="editTitle" value="${todo.title}">
@@ -372,9 +384,11 @@ const renderTaskEdit = (todo, container) => {
     <option value="add-new">➕ Add new project</option>
     </select>
     </label>
-
+    </div>
+    <div class="alteration-btns">
     <button id="saveTaskBtn">Save</button>
     <button id="cancelEditBtn">Cancel</button>
+    </div>
     `;
 
     container.querySelector("#saveTaskBtn").addEventListener("click", () => {

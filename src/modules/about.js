@@ -19,8 +19,6 @@ export const loadAbout = () => {
     <img class="about-logo" src="${contentLogo}" alt="Logo">
     <p>At <i>Ticked</i>, we believe that productivity should feel effortless. Whether you're managing projects, tracking habits, or just trying to stay on top of your daily life, our sleek and intuitive app helps you focus on what matters—without the clutter.
     <br><br>No distractions. No unnecessary features. Just a smart, minimalist tool designed to help you tick off your tasks with ease.</p>
-
-    <p><i>Ticked</i> is the award-winning personal task manager that helps you plan your day, manage your projects, and make real progress toward your goals.</p>
     <img class="presentation-img" src="https://culturedcode.com/things/2024-01-20/images/meettheallnewthings2-io75.jpg">
     <div class="more-details">
     <div class="title-section"><img class="fancysection-img" src="https://culturedcode.com/things/2024-01-20/images/fancysection-icon-features-io70.png" alt="fancysection-icon"><h2>Simply Powerful<h2></div>
